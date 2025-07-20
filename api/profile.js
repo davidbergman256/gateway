@@ -1,9 +1,7 @@
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
-require('dotenv').config();
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const { email } = req.query;
   if (!email) return res.status(400).json({ error: 'email param required' });
 
@@ -31,4 +29,4 @@ module.exports = async (req, res) => {
     console.error("💣 Caught error:", err);
     res.status(500).json({ error: 'Server error' });
   }
-};
+}
