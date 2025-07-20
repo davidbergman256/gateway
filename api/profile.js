@@ -1,15 +1,15 @@
-require('dotenv').config();
-const express = require('express');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-const app = express();
-const port = 3000;
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
-app.get('/api/profile', async (req, res) => {
-  const email = req.query.email;
+require('dotenv').config();
+
+module.exports = async (req, res) => {
+  const { email } = req.query;
   if (!email) return res.status(400).json({ error: 'email param required' });
 
-  const url = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE}/registrations`
-            + `?filterByFormula=${encodeURIComponent(`{email}="${email}"`)}`;
+  const url =
+    `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE}/registrations` +
+    `?filterByFormula=${encodeURIComponent(`{email}="${email}"`)}`;
 
   try {
     const r = await fetch(url, {
@@ -31,8 +31,4 @@ app.get('/api/profile', async (req, res) => {
     console.error("💣 Caught error:", err);
     res.status(500).json({ error: 'Server error' });
   }
-});
-
-app.listen(port, () => {
-  console.log(`🔥 Airtable API live at http://localhost:${port}/api/profile`);
-});
+};
